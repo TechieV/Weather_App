@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather App</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=search"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"
+      integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body>
+    <main>
+      <div class="main-container">
+        <div class="input-container">
+          <input type="city" placeholder="Enter City Name" />
+          <button class="input-btn">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
+        </div>
+        <div class="info">
+          <div class="location">
+            <i class="fa-solid fa-location-dot"></i>
+            <h3>Delhi</h3>
+          </div>
+          <div class="date">Sat, 01 Aug</div>
+        </div>
+        <div class="weather">
+          <div class="weather-img">
+            <img src="assets/weather/clouds.svg" alt="" />
+          </div>
+          <div class="weather-info">
+            <div class="temp">
+              <h1>45 °C</h1>
+            </div>
+            <div class="condition">
+              <p>Clouds</p>
+            </div>
+          </div>
+        </div>
+        <div class="additional-info-container">
+          <div class="feel-like">
+            <h4>Feel Like</h4>
+            <p>45 °C</p>
+          </div>
+          <div class="min-temp">
+            <h4>Min Temp</h4>
+            <p>45 °C</p>
+          </div>
+          <div class="max-temp">
+            <h4>Max Temp</h4>
+            <p>62 °C</p>
+          </div>
+        </div>
+        <div class="weather-data">
+          <div class="humidity-container">
+            <i class="fa-solid fa-droplet"></i>
+          </div>
+          <div class="humidity-info">
+            <p>Humidity</p>
+            <p>100%</p>
+          </div>
+          <div class="wind-container">
+            <i class="fa-solid fa-wind"></i>
+          </div>
+          <div class="wind-info">
+            <p>Wind Speed</p>
+            <p>2 M/S</p>
+          </div>
+        </div>
+        <div class="forcast-container">
+          <div class="forcast1 forcast">
+            <p>Aug 03</p>
+            <img src="assets/weather/rain.svg">
+            <p>39 °C</p>
+          </div>
+          <div class="forcast2 forcast">
+            <p>Aug 03</p>
+            <img src="assets/weather/rain.svg">
+            <p>39 °C</p>
+          </div>
+          <div class="forcast3 forcast">
+            <p>Aug 03</p>
+            <img src="assets/weather/rain.svg">
+            <p>39 °C</p>
+          </div>
+          <div class="forcast4 forcast">
+            <p>Aug 03</p>
+            <img src="assets/weather/rain.svg">
+            <p>39 °C</p>
+          </div>
+          <div class="forcast5 forcast">
+            <p>Aug 03</p>
+            <img src="assets/weather/rain.svg">
+            <p>39 °C</p>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>
