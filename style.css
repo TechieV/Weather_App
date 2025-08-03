@@ -79,6 +79,7 @@ display: flex;
 border: none;
 cursor: pointer;
 color: rgb(255,255,255,0.75);
+font-size: 15px;
 }
 .info{
     margin-top: 1rem;
