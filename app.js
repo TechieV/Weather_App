@@ -17,19 +17,21 @@ btn.addEventListener("click", (evt) => {
 const weather = async (city) => {
   let URL = `${baseURL}${city}&appid=${apiKey}${metric}`;
   let forcastURL = `${baseForcast}${city}&appid=${apiKey}${metric}`;
-  let aqiURL = `${baseAQI}${city}/?token=${tokenAQI}`;
-
-  Aqi = await fetch(aqiURL);
+  
   data = await fetch(URL);
   forcastData = await fetch(forcastURL);
 
-  Aqi = await Aqi.json();
   forcastData = await forcastData.json();
   response = await data.json();
 
+  let aqiURL = `${baseAQI}${response.name}/?token=${tokenAQI}`;
+  
+  Aqi = await fetch(aqiURL);
+  Aqi = await Aqi.json();
+  
   console.log(response);
   console.log(forcastData);
-  console.log(Aqi);
+  console.log(Aqi)
 
   if (data.status == "200" || data.status == 200) {
     document.querySelector(".container").classList.remove("none-container");
@@ -53,23 +55,12 @@ const weather = async (city) => {
     description: response.weather[0].description,
     city: response.name,
   };
-  let id = weatherData.id;
   
+  
+  
+  let id = weatherData.id; 
   updateImg(id);
-  document.querySelector(".location h3").innerText = weatherData.city;
-  document.querySelector(".condition p").innerText = weatherData.condition;
-  document.querySelector(".temp h1").innerText =
-    Math.round(weatherData.temp) + " °C";
-  document.querySelector(".feel-like p").innerText =
-    Math.round(weatherData.feelLike) + " °C";
-  document.querySelector(".min-temp p").innerText =
-    Math.round(weatherData.minTemp) + " °C";
-  document.querySelector(".max-temp p").innerText =
-    Math.round(weatherData.maxTemp) + " °C";
-  document.querySelector(".humidity-info h4").innerText =
-    weatherData.humidity + "%";
-  document.querySelector(".wind-info h4").innerText = weatherData.wind + "M/S";
-  return id;
+  updateWeather(weatherData);
 };
 
 let updateImg = async (id) => {
@@ -91,3 +82,21 @@ let updateImg = async (id) => {
     img.src = "assets/weather/thunderstorm.svg";
   }
 };
+
+let updateWeather = async (weatherData) => {
+  
+  document.querySelector(".location h3").innerText = weatherData.city;
+  document.querySelector(".condition p").innerText = weatherData.condition;
+  document.querySelector(".temp h1").innerText =
+Math.round(weatherData.temp) + " °C";
+  document.querySelector(".feel-like p").innerText =
+    Math.round(weatherData.feelLike) + " °C";
+  document.querySelector(".min-temp p").innerText =
+    Math.round(weatherData.minTemp) + " °C";
+  document.querySelector(".max-temp p").innerText =
+    Math.round(weatherData.maxTemp) + " °C";
+  document.querySelector(".humidity-info h4").innerText =
+    weatherData.humidity + "%";
+  document.querySelector(".wind-info h4").innerText = weatherData.wind + "M/S";
+
+}
