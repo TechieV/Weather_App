@@ -81,6 +81,9 @@ cursor: pointer;
 color: rgb(255,255,255,0.75);
 font-size: 15px;
 }
+.input-btn:hover{
+    background:rgba(0, 0, 0, 0.15);
+}
 .info{
     margin-top: 1rem;
     width: 100%;
@@ -198,3 +201,33 @@ font-size: 15px;
     padding: 10px;
     text-align: center;
 }
+.none-container{
+    display: none;
+}
+.not-found{
+    height: 100%;
+}
+.not-found img, .search-city img{
+    margin-top: 10%;
+    height: 70%;
+    width: 100%;
+    margin-bottom: 10%;
+}
+.not-found p{
+    text-align: center;
+    font-size: larger;
+    font-weight: 500;
+}
+.search-city{
+    height: 100%;
+}
+.search-city p:first-of-type{
+    text-align: center;
+    font-size: xx-large;
+    font-weight: 700;
+}
+.search-city p:last-child{
+    font-size: normal;
+    text-align: center;
+}
+
