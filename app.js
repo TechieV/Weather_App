@@ -100,3 +100,13 @@ Math.round(weatherData.temp) + " °C";
   document.querySelector(".wind-info h4").innerText = weatherData.wind + "M/S";
 
 }
+
+const updateDate = () => { 
+const now = new Date();
+const day = now.toLocaleDateString('en-US', { weekday: 'short' });
+const date = now.toLocaleDateString('en-US', { day: '2-digit' });
+const month = now.toLocaleDateString('en-US', { month: 'short' });
+const custom = `${day}, ${date} ${month}`;
+return custom;
+}
+document.querySelector(".date").innerText = updateDate();
