@@ -9,9 +9,8 @@ const btn = document.querySelector(".input-container button");
 btn.addEventListener("click", (evt) => {
   evt.preventDefault();
   cityValue = inputCity.value.trim();
-  if (cityValue) {
-    weather(cityValue);
-  }
+  console.log("input ", cityValue);
+  weather(cityValue);
 });
 
 const weather = async (city) => {
@@ -42,8 +41,6 @@ const weather = async (city) => {
     humidity: response.main.humidity,
     feelLike: response.main.feels_like,
     temp: response.main.temp,
-    maxTemp: response.main.temp_max,
-    minTemp: response.main.temp_min,
     wind: response.wind.speed, // meter per sec
     id: response.weather[0].id,
     condition: response.weather[0].main,
@@ -51,12 +48,12 @@ const weather = async (city) => {
     city: response.name,
   };
 
-  updateImg(weatherData.id);
-  updateWeather(weatherData);
+  let id = weatherData.id;
+  updateImg(id);
+  updateWeather(weatherData, forcastData); // pass forecast too
   document.querySelector(".date").innerText = updateDate();
 
-  // Call forecast update here
-  updateForecast(forcastData);
+  updateForecast(forcastData); //  forecast cards
 };
 
 let updateImg = async (id) => {
@@ -79,21 +76,36 @@ let updateImg = async (id) => {
   }
 };
 
-let updateWeather = async (weatherData) => {
+let updateWeather = async (weatherData, forcastData) => {
+  //  Current weather
   document.querySelector(".location h3").innerText = weatherData.city;
   document.querySelector(".condition p").innerText = weatherData.condition;
   document.querySelector(".temp h1").innerText =
     Math.round(weatherData.temp) + " °C";
+
   document.querySelector(".feel-like p").innerText =
     Math.round(weatherData.feelLike) + " °C";
-  document.querySelector(".min-temp p").innerText =
-    Math.round(weatherData.minTemp) + " °C";
-  document.querySelector(".max-temp p").innerText =
-    Math.round(weatherData.maxTemp) + " °C";
+
   document.querySelector(".humidity-info h4").innerText =
     weatherData.humidity + "%";
   document.querySelector(".wind-info h4").innerText =
     weatherData.wind + " M/S";
+
+  //  Real daily Min/Max temps from forecast
+  const today = new Date().toDateString();
+  const todayTemps = forcastData.list
+    .filter((item) => new Date(item.dt_txt).toDateString() === today)
+    .map((item) => item.main.temp);
+
+  if (todayTemps.length > 0) {
+    const minTemp = Math.min(...todayTemps);
+    const maxTemp = Math.max(...todayTemps);
+
+    document.querySelector(".min-temp p").innerText =
+      Math.round(minTemp) + " °C";
+    document.querySelector(".max-temp p").innerText =
+      Math.round(maxTemp) + " °C";
+  }
 };
 
 const updateDate = () => {
@@ -105,17 +117,18 @@ const updateDate = () => {
   return custom;
 };
 
-//--------------------------------------------------
-// Forecast Functionality (Date + Temp + Icon)
-//--------------------------------------------------
+//  Forecast Functionality (Date + Temp + Icon
+
 const updateForecast = (forcastData) => {
   const forecastContainer = document.querySelector(".forcast-container");
   forecastContainer.innerHTML = ""; // clear old cards
 
+  // Pick one forecast per day (around 12:00)
   const dailyForecasts = {};
   forcastData.list.forEach((item) => {
     const date = new Date(item.dt_txt);
     const dayKey = date.toLocaleDateString("en-US", {
+
       day: "2-digit",
       month: "short",
     });
@@ -126,6 +139,7 @@ const updateForecast = (forcastData) => {
     }
   });
 
+  // Take 5 days only
   Object.keys(dailyForecasts)
     .slice(0, 5)
     .forEach((day) => {
@@ -133,6 +147,7 @@ const updateForecast = (forcastData) => {
       const temp = Math.round(forecast.main.temp);
       const condition = forecast.weather[0].main.toLowerCase();
 
+      // Pick correct icon
       let icon = "clouds.svg";
       if (condition.includes("clear")) icon = "clear.svg";
       else if (condition.includes("rain")) icon = "rain.svg";
@@ -140,6 +155,7 @@ const updateForecast = (forcastData) => {
       else if (condition.includes("drizzle")) icon = "drizzle.svg";
       else if (condition.includes("thunderstorm")) icon = "thunderstorm.svg";
 
+      // Create forecast card
       const card = document.createElement("div");
       card.classList.add("forcast");
 
