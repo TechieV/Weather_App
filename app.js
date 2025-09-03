@@ -2,45 +2,40 @@ const baseURL = "https://api.openweathermap.org/data/2.5/weather?q=";
 const baseForcast = "https://api.openweathermap.org/data/2.5/forecast?q=";
 const apiKey = "222567df567293a90ef7773617392883";
 const metric = "&units=metric";
-const baseAQI = "https://api.waqi.info/feed/";
-const tokenAQI = "ed8524167a44b9e188c1032f2a9eb2aeec749286";
+
 let inputCity = document.querySelector(".input-container input");
 const btn = document.querySelector(".input-container button");
 
 btn.addEventListener("click", (evt) => {
   evt.preventDefault();
   cityValue = inputCity.value.trim();
-  console.log("input ", cityValue);
-  weather(cityValue);
+  if (cityValue) {
+    weather(cityValue);
+  }
 });
 
 const weather = async (city) => {
   let URL = `${baseURL}${city}&appid=${apiKey}${metric}`;
   let forcastURL = `${baseForcast}${city}&appid=${apiKey}${metric}`;
-  
-  data = await fetch(URL);
-  forcastData = await fetch(forcastURL);
 
-  forcastData = await forcastData.json();
-  response = await data.json();
+  let data = await fetch(URL);
+  let response = await data.json();
 
-  let aqiURL = `${baseAQI}${response.name}/?token=${tokenAQI}`;
-  
-  Aqi = await fetch(aqiURL);
-  Aqi = await Aqi.json();
-  
+  let forecastRes = await fetch(forcastURL);
+  let forcastData = await forecastRes.json();
+
   console.log(response);
   console.log(forcastData);
-  console.log(Aqi)
 
-  if (data.status == "200" || data.status == 200) {
+  if (data.status == 200) {
     document.querySelector(".container").classList.remove("none-container");
     document.querySelector(".search-city").classList.add("none-container");
     document.querySelector(".not-found").classList.add("none-container");
-  } else if (data.status !== "200" || data.status !== 200) {
+  } else {
     document.querySelector(".container").classList.add("none-container");
     document.querySelector(".not-found").classList.remove("none-container");
     document.querySelector(".search-city").classList.add("none-container");
+    return; // stop if city not found
   }
 
   const weatherData = {
@@ -49,18 +44,19 @@ const weather = async (city) => {
     temp: response.main.temp,
     maxTemp: response.main.temp_max,
     minTemp: response.main.temp_min,
-    wind: response.wind.speed, //meter per sec
+    wind: response.wind.speed, // meter per sec
     id: response.weather[0].id,
     condition: response.weather[0].main,
     description: response.weather[0].description,
     city: response.name,
   };
-  
-  
-  
-  let id = weatherData.id; 
-  updateImg(id);
+
+  updateImg(weatherData.id);
   updateWeather(weatherData);
+  document.querySelector(".date").innerText = updateDate();
+
+  // Call forecast update here
+  updateForecast(forcastData);
 };
 
 let updateImg = async (id) => {
@@ -84,11 +80,10 @@ let updateImg = async (id) => {
 };
 
 let updateWeather = async (weatherData) => {
-  
   document.querySelector(".location h3").innerText = weatherData.city;
   document.querySelector(".condition p").innerText = weatherData.condition;
   document.querySelector(".temp h1").innerText =
-Math.round(weatherData.temp) + " °C";
+    Math.round(weatherData.temp) + " °C";
   document.querySelector(".feel-like p").innerText =
     Math.round(weatherData.feelLike) + " °C";
   document.querySelector(".min-temp p").innerText =
@@ -97,16 +92,63 @@ Math.round(weatherData.temp) + " °C";
     Math.round(weatherData.maxTemp) + " °C";
   document.querySelector(".humidity-info h4").innerText =
     weatherData.humidity + "%";
-  document.querySelector(".wind-info h4").innerText = weatherData.wind + "M/S";
+  document.querySelector(".wind-info h4").innerText =
+    weatherData.wind + " M/S";
+};
 
-}
+const updateDate = () => {
+  const now = new Date();
+  const day = now.toLocaleDateString("en-US", { weekday: "short" });
+  const date = now.toLocaleDateString("en-US", { day: "2-digit" });
+  const month = now.toLocaleDateString("en-US", { month: "short" });
+  const custom = `${day}, ${date} ${month}`;
+  return custom;
+};
 
-const updateDate = () => { 
-const now = new Date();
-const day = now.toLocaleDateString('en-US', { weekday: 'short' });
-const date = now.toLocaleDateString('en-US', { day: '2-digit' });
-const month = now.toLocaleDateString('en-US', { month: 'short' });
-const custom = `${day}, ${date} ${month}`;
-return custom;
-}
-document.querySelector(".date").innerText = updateDate();
+//--------------------------------------------------
+// Forecast Functionality (Date + Temp + Icon)
+//--------------------------------------------------
+const updateForecast = (forcastData) => {
+  const forecastContainer = document.querySelector(".forcast-container");
+  forecastContainer.innerHTML = ""; // clear old cards
+
+  const dailyForecasts = {};
+  forcastData.list.forEach((item) => {
+    const date = new Date(item.dt_txt);
+    const dayKey = date.toLocaleDateString("en-US", {
+      day: "2-digit",
+      month: "short",
+    });
+    const hour = date.getHours();
+
+    if (hour === 12 && !dailyForecasts[dayKey]) {
+      dailyForecasts[dayKey] = item;
+    }
+  });
+
+  Object.keys(dailyForecasts)
+    .slice(0, 5)
+    .forEach((day) => {
+      const forecast = dailyForecasts[day];
+      const temp = Math.round(forecast.main.temp);
+      const condition = forecast.weather[0].main.toLowerCase();
+
+      let icon = "clouds.svg";
+      if (condition.includes("clear")) icon = "clear.svg";
+      else if (condition.includes("rain")) icon = "rain.svg";
+      else if (condition.includes("snow")) icon = "snow.svg";
+      else if (condition.includes("drizzle")) icon = "drizzle.svg";
+      else if (condition.includes("thunderstorm")) icon = "thunderstorm.svg";
+
+      const card = document.createElement("div");
+      card.classList.add("forcast");
+
+      card.innerHTML = `
+        <p>${day}</p>
+        <img src="assets/weather/${icon}" alt="${condition}">
+        <p>${temp} °C</p>
+      `;
+
+      forecastContainer.appendChild(card);
+    });
+};
